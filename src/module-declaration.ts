@@ -180,7 +180,14 @@ export const generateModuleDeclaration = (
           listener = `(${args.join(`,\n${indent}`)}) => void`;
         }
 
-        for (let method of ['on', 'off', 'once', 'addListener', 'removeListener']) {
+        const methods = ['on', 'off', 'once', 'addListener', 'removeListener'];
+        for (const method of methods) {
+          if (
+            methods.indexOf(method) > 0 &&
+            moduleEvent.additionalTags.indexOf(DocumentationTag.STABILITY_DEPRECATED) !== -1
+          ) {
+            moduleAPI.push('/** @deprecated */');
+          }
           moduleAPI.push(`${method}(event: '${moduleEvent.name}', listener: ${listener}): this;`);
         }
       });
@@ -220,7 +227,14 @@ export const generateModuleDeclaration = (
           );
         }
 
-        for (let method of ['addEventListener', 'removeEventListener']) {
+        const methods = ['addEventListener', 'removeEventListener'];
+        for (const method of methods) {
+          if (
+            methods.indexOf(method) > 0 &&
+            domEvent.additionalTags.indexOf(DocumentationTag.STABILITY_DEPRECATED) !== -1
+          ) {
+            moduleAPI.push('/** @deprecated */');
+          }
           moduleAPI.push(
             `${method}(event: '${domEvent.name}', listener: (event: ${eventType}) => void${
               method === 'addEventListener' ? ', useCapture?: boolean' : ''
